@@ -165,18 +165,18 @@
     return false;
   }
 
-  const savedTheme = localStorage.getItem(keys.theme);
-  if (savedTheme) root.dataset.theme = savedTheme;
-  document.getElementById('themeToggle')?.addEventListener('click', () => {
-    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem(keys.theme, root.dataset.theme);
-    showToast(root.dataset.theme === 'dark' ? 'Tema escuro ativado' : 'Tema claro ativado');
-  });
+  root.dataset.theme = 'dark';
+  localStorage.removeItem(keys.theme);
+  document.getElementById('themeToggle')?.remove();
 
   const currentProfile = getCurrentProfile();
   if (currentProfile) {
     body.classList.add('is-authenticated');
     document.querySelectorAll('[data-user-initials]').forEach(item => item.textContent = initials(currentProfile.displayName || currentProfile.username));
+    document.querySelectorAll('.profile-button img').forEach(image => {
+      image.src = currentProfile.photoURL || `${base}assets/images/perfil/avatar.png`;
+      image.alt = `Foto de ${currentProfile.displayName || currentProfile.username}`;
+    });
   } else {
     body.classList.add('is-guest');
   }
@@ -681,7 +681,7 @@
       month: 'long',
       year: 'numeric'
     }).format(new Date(profile.joinedAt));
-    document.getElementById('profileTheme').textContent = root.dataset.theme === 'dark' ? 'Escuro' : 'Claro';
+    document.getElementById('profileTheme').textContent = 'Escuro';
     const entries = Object.entries(profile.anime || {}).filter(([id, entry]) => animeCatalog[id] && (entry.status || entry.score || entry.favorite || entry.episodes));
     document.getElementById('profileListCount').textContent = entries.filter(([, entry]) => entry.status).length;
     document.getElementById('profileWatchingCount').textContent = entries.filter(([id, entry]) => entry.status === 'assistindo' && (airingAnime[id] || safeEpisodes(id, entry) < (animeEpisodeLimits[id] || Number(entry.totalEpisodes) || Infinity))).length;

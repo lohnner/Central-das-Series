@@ -24,7 +24,7 @@
       <div class="topbar shell">
         <a class="brand" href="../index.html"><span class="brand-mark">C</span><span>CENTRAL DAS SÉRIES</span></a>
         <form class="global-search" role="search"><span class="search-icon">⌕</span><input id="globalSearch" type="search" placeholder="Buscar série..." aria-label="Buscar série"><kbd>Ctrl K</kbd><div class="search-results" id="searchResults" hidden></div></form>
-        <div class="header-actions"><button class="icon-button" id="themeToggle" type="button" aria-label="Alternar tema">☼</button><a class="login-link auth-guest" href="../login.html">Entrar</a><a class="profile-button auth-user" href="../perfil.html"><img src="../assets/images/perfil/avatar.png" alt=""></a><button class="menu-toggle" id="menuToggle" type="button">☰</button></div>
+        <div class="header-actions"><a class="login-link auth-guest" href="../login.html">Entrar</a><a class="profile-button auth-user" href="../perfil.html" aria-label="Abrir perfil"><img src="../assets/images/perfil/avatar.png" alt="Foto do usuário"><span class="online-dot"></span></a><button class="menu-toggle" id="menuToggle" type="button">☰</button></div>
       </div>
       <nav class="main-nav" id="mainNav"><div class="shell nav-inner"><a href="../index.html">Home</a><a class="active" href="../series.html">Séries</a><a href="../calendario.html">Calendário</a><a href="../ranking.html">Ranking</a><a href="../ranking-usuarios.html">Ranking de usuários</a></div></nav>
     </header>

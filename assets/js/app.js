@@ -18,6 +18,7 @@
   let firebaseAuth = null;
   let firestore = null;
   let firebaseUser = null;
+  let requiresNickname = false;
   const loadScript = source => new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = source;
@@ -135,6 +136,7 @@
     if (firebaseUser) {
       const privateDocument = await firestore.collection('users').doc(firebaseUser.uid).get();
       const privateProfile = privateDocument.exists ? privateDocument.data().nakamaProfile : null;
+      requiresNickname = !privateProfile?.username;
       const username = (privateProfile?.username || firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'usuario')
         .replace(/\s+/g, '_').replace(/[^\wÀ-ÿ.-]/g, '').slice(0, 24) || 'usuario';
       const profile = {
@@ -146,7 +148,7 @@
       };
       profiles[firebaseUser.uid] = profile;
       localStorage.setItem(keys.current, firebaseUser.uid);
-      await syncProfile(profile);
+      if (!requiresNickname) await syncProfile(profile);
     } else {
       localStorage.removeItem(keys.current);
     }
@@ -553,6 +555,51 @@
       }).join('');
     }
   }
+
+  const nicknameModal = document.getElementById('nicknameModal');
+  const nicknameForm = document.getElementById('nicknameForm');
+  const openNicknameModal = () => {
+    if (!nicknameModal || !firebaseUser) return;
+    nicknameModal.hidden = false;
+    body.classList.add('nickname-required');
+    const nicknameInput = document.getElementById('nickname');
+    nicknameInput.value = getCurrentProfile()?.username === 'usuario' ? '' : getCurrentProfile()?.username || '';
+    setTimeout(() => nicknameInput.focus(), 50);
+  };
+  if (requiresNickname) openNicknameModal();
+  document.getElementById('editNicknameButton')?.addEventListener('click', openNicknameModal);
+  nicknameForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const nicknameInput = document.getElementById('nickname');
+    const nicknameError = document.getElementById('nicknameError');
+    const nickname = nicknameInput.value.trim();
+    if (!/^[A-Za-zÀ-ÿ0-9_.-]{3,24}$/.test(nickname)) {
+      nicknameError.textContent = 'Use de 3 a 24 caracteres: letras, números, ponto, hífen ou underline.';
+      return;
+    }
+    const alreadyUsed = Object.values(getProfiles()).some(profile =>
+      profile.uid !== firebaseUser.uid && profile.username?.toLowerCase() === nickname.toLowerCase()
+    );
+    if (alreadyUsed) {
+      nicknameError.textContent = 'Este nick já está sendo usado.';
+      return;
+    }
+    const profile = getCurrentProfile();
+    profile.username = nickname;
+    profile.displayName = nickname;
+    event.submitter.disabled = true;
+    event.submitter.textContent = 'Salvando...';
+    try {
+      await firebaseUser.updateProfile({ displayName: nickname });
+      cacheProfile(profile);
+      await syncProfile(profile);
+      window.location.reload();
+    } catch (error) {
+      nicknameError.textContent = 'Não foi possível salvar o nick. Tente novamente.';
+      event.submitter.disabled = false;
+      event.submitter.textContent = 'Começar minha jornada';
+    }
+  });
 
   document.getElementById('logoutButton')?.addEventListener('click', async () => {
     if (firebaseAuth) await firebaseAuth.signOut();

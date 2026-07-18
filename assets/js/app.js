@@ -5,7 +5,7 @@
   const toast = document.getElementById('toast');
   let toastTimer;
 
-  const keys = { theme: 'nakama-theme', current: 'nakama-current-user', profiles: 'nakama-profiles' };
+  const keys = { theme: 'central-series-theme', current: 'central-series-current-user', profiles: 'central-series-profiles' };
   const firebaseConfig = {
     apiKey: 'AIzaSyCgZgwPUo5Ehp5JIdprYfjhIb5VlyJ2RcM',
     authDomain: 'games-loner.firebaseapp.com',
@@ -39,11 +39,11 @@
   } catch (error) {
     console.error('Não foi possível conectar ao Firebase.', error);
   }
-  const animeId = body.dataset.animeId || 'tomb-raider-king';
-  const animeTitle = body.dataset.animeTitle || 'Tomb Raider King';
-  const animeSlug = body.dataset.animeSlug || 'tomb-raider-king';
-  const animeCover = body.dataset.animeCover || 'assets/images/capas/tomb-raider-king.jpg';
-  const totalEpisodes = Number(body.dataset.totalEpisodes) || 12;
+  const animeId = body.dataset.seriesId || 'a-casa-do-dragao';
+  const animeTitle = body.dataset.seriesTitle || 'A Casa do Dragão';
+  const animeSlug = body.dataset.seriesSlug || 'a-casa-do-dragao';
+  const animeCover = body.dataset.seriesCover || 'assets/images/capas/a-casa-do-dragao-temporada-3.jpg';
+  const totalEpisodes = Number(body.dataset.totalEpisodes) || 22;
   const seasonEpisodeLimits = (body.dataset.seasonEpisodes || '').split(',').map(Number).filter(value => value > 0);
   const isAiring = body.dataset.airing === 'true';
   const experiencePerEpisode = 22;
@@ -53,18 +53,14 @@
   const initials = name => name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
   const htmlEscapes = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
   const escapeHtml = value => String(value).replace(/[&<>"']/g, character => htmlEscapes[character]);
-  const animeEpisodeLimits = { 'tomb-raider-king': 12, dorohedoro: 23, 'mushoku-tensei': 51, 'the-ghost-in-the-shell': 2, naruto: 220 };
-  const airingAnime = { 'tomb-raider-king': true, 'mushoku-tensei': true, 'the-ghost-in-the-shell': true };
+  const animeEpisodeLimits = { 'a-casa-do-dragao': 22 };
+  const airingAnime = { 'a-casa-do-dragao': true };
   const animeCatalog = {
-    'tomb-raider-king': { title: 'Tomb Raider King', slug: 'tomb-raider-king', cover: 'assets/images/capas/tomb-raider-king.jpg', totalEpisodes: 12 },
-    dorohedoro: { title: 'Dorohedoro', slug: 'dorohedoro', cover: 'assets/images/capas/dorohedoro.jpg', totalEpisodes: 23 },
-    'mushoku-tensei': { title: 'Mushoku Tensei: Jobless Reincarnation', slug: 'mushoku-tensei', cover: 'assets/images/capas/mushoku-tensei.png', totalEpisodes: 51 },
-    'the-ghost-in-the-shell': { title: 'The Ghost in the Shell', slug: 'the-ghost-in-the-shell', cover: 'assets/images/capas/the-ghost-in-the-shell.jpg', totalEpisodes: 2 },
-    naruto: { title: 'Naruto', slug: 'naruto', cover: 'assets/images/capas/naruto.jpg', totalEpisodes: 220 }
+    'a-casa-do-dragao': { title: 'A Casa do Dragão', slug: 'a-casa-do-dragao', cover: 'assets/images/capas/a-casa-do-dragao-temporada-3.jpg', totalEpisodes: 22 }
   };
   const safeEpisodes = (id, entry = {}) => Math.min(animeEpisodeLimits[id] || Number(entry.totalEpisodes) || 0, Math.max(0, Number(entry.episodes) || 0));
   const formatNumber = value => new Intl.NumberFormat('pt-BR').format(value);
-  const profileExperience = profile => Object.entries(profile?.anime || {}).reduce((total, [id, entry]) => total + safeEpisodes(id, entry), 0) * experiencePerEpisode;
+  const profileExperience = profile => Object.entries(profile?.anime || {}).reduce((total, [id, entry]) => total + (animeEpisodeLimits[id] ? safeEpisodes(id, entry) : 0), 0) * experiencePerEpisode;
 
   function experienceForLevel(level) {
     const n = Math.max(0, level - 1);
@@ -117,7 +113,7 @@
       anime: profile.anime || {}
     };
     await Promise.all([
-      firestore.collection('users').doc(profile.uid).set({ nakamaProfile: publicProfile }, { merge: true }),
+      firestore.collection('users').doc(profile.uid).set({ centralSeriesProfile: publicProfile }, { merge: true }),
       firestore.collection('publicProfiles').doc(profile.uid).set(publicProfile, { merge: true })
     ]);
   }
@@ -137,7 +133,7 @@
     publicSnapshot.forEach(document => { profiles[document.id] = { uid: document.id, ...document.data() }; });
     if (firebaseUser) {
       const privateDocument = await firestore.collection('users').doc(firebaseUser.uid).get();
-      const privateProfile = privateDocument.exists ? privateDocument.data().nakamaProfile : null;
+      const privateProfile = privateDocument.exists ? privateDocument.data().centralSeriesProfile : null;
       requiresNickname = !privateProfile?.username;
       const username = (privateProfile?.username || firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'usuario')
         .replace(/\s+/g, '_').replace(/[^\wÀ-ÿ.-]/g, '').slice(0, 24) || 'usuario';
@@ -197,8 +193,8 @@
   function updateCatalogCards() {
     const profiles = Object.values(getProfiles());
     const profile = getCurrentProfile();
-    document.querySelectorAll('[data-anime-card]').forEach(card => {
-      const cardAnimeId = card.dataset.animeCard;
+    document.querySelectorAll('[data-series-card]').forEach(card => {
+      const cardAnimeId = card.dataset.seriesCard;
       const cardTotal = Number(card.dataset.totalEpisodes) || 1;
       const entry = profile?.anime?.[cardAnimeId] || {};
       const episodes = Math.min(cardTotal, Math.max(0, Number(entry.episodes) || 0));
@@ -222,20 +218,17 @@
 
   const search = document.getElementById('globalSearch');
   const results = document.getElementById('searchResults');
+  const normalizeSearch = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   search?.addEventListener('input', () => {
-    const query = search.value.trim().toLowerCase();
+    const query = normalizeSearch(search.value.trim());
     if (!query) { results.hidden = true; return; }
     const catalog = [
-      { terms: 'tomb raider king dogulwang', title: 'Tomb Raider King', slug: 'tomb-raider-king', cover: 'tomb-raider-king.jpg', episodes: 12 },
-      { terms: 'dorohedoro caiman nikaido', title: 'Dorohedoro', slug: 'dorohedoro', cover: 'dorohedoro.jpg', episodes: 23 },
-      { terms: 'mushoku tensei jobless reincarnation rudeus greyrat', title: 'Mushoku Tensei: Jobless Reincarnation', slug: 'mushoku-tensei', cover: 'mushoku-tensei.png', episodes: 51 },
-      { terms: 'the ghost in the shell kokaku kidotai motoko kusanagi', title: 'The Ghost in the Shell', slug: 'the-ghost-in-the-shell', cover: 'the-ghost-in-the-shell.jpg', episodes: 2 },
-      { terms: 'naruto naruto classico uzumaki sasuke sakura kakashi', title: 'Naruto', slug: 'naruto', cover: 'naruto.jpg', episodes: 220 }
+      { terms: 'a casa do dragao house of the dragon targaryen rhaenyra alicent', title: 'A Casa do Dragão', slug: 'a-casa-do-dragao', cover: 'a-casa-do-dragao-temporada-3.jpg', episodes: 22 }
     ];
     const matches = catalog.filter(anime => anime.terms.includes(query));
     results.innerHTML = matches.length
-      ? matches.map(anime => `<a class="search-result" href="${base}anime/${anime.slug}.html"><img src="${base}assets/images/capas/${anime.cover}" alt=""><span><b>${anime.title}</b><small>Anime • ${anime.episodes} episódios</small></span></a>`).join('')
-      : '<div class="no-result">Nenhum anime encontrado.</div>';
+      ? matches.map(anime => `<a class="search-result" href="${base}series/${anime.slug}.html"><img src="${base}assets/images/capas/${anime.cover}" alt=""><span><b>${anime.title}</b><small>Série • ${anime.episodes} episódios disponíveis</small></span></a>`).join('')
+      : '<div class="no-result">Nenhuma série encontrada.</div>';
     results.hidden = false;
   });
   search?.addEventListener('keydown', event => {
@@ -251,29 +244,29 @@
   const catalogSearch = document.getElementById('catalogSearch');
   const catalogEmpty = document.getElementById('catalogEmpty');
   catalogSearch?.addEventListener('input', () => {
-    const query = catalogSearch.value.trim().toLowerCase();
+    const query = normalizeSearch(catalogSearch.value.trim());
     let visible = 0;
-    document.querySelectorAll('.catalog-anime-card').forEach(card => {
-      const matches = !query || card.dataset.catalogTitle.includes(query);
+    document.querySelectorAll('.catalog-series-card').forEach(card => {
+      const matches = !query || normalizeSearch(card.dataset.catalogTitle).includes(query);
       card.classList.toggle('is-hidden', !matches);
       if (matches) visible += 1;
     });
     if (catalogEmpty) catalogEmpty.hidden = visible !== 0;
   });
 
-  if (body.dataset.page === 'anime-ranking') {
+  if (body.dataset.page === 'series-ranking') {
     const profiles = Object.values(getProfiles());
     const ranking = Object.entries(animeCatalog).map(([id, anime]) => ({
       ...anime,
       id,
       points: profiles.filter(profile => profile?.anime?.[id]?.status === 'assistindo').length
     })).sort((first, second) => second.points - first.points || first.title.localeCompare(second.title, 'pt-BR'));
-    document.getElementById('animeRankingTotal').textContent = formatNumber(ranking.reduce((total, anime) => total + anime.points, 0));
-    document.getElementById('animeRankingList').innerHTML = ranking.map((anime, index) => `
+    document.getElementById('seriesRankingTotal').textContent = formatNumber(ranking.reduce((total, anime) => total + anime.points, 0));
+    document.getElementById('seriesRankingList').innerHTML = ranking.map((anime, index) => `
       <article class="leaderboard-row anime-leaderboard-row">
         <span class="leaderboard-position">${index + 1}</span>
-        <a class="leaderboard-cover" href="anime/${anime.slug}.html"><img src="${anime.cover}" alt="Capa de ${anime.title}"></a>
-        <div class="leaderboard-name"><span>ANIME • ${anime.totalEpisodes} EPISÓDIOS</span><h3><a href="anime/${anime.slug}.html">${anime.title}</a></h3><small>${anime.points === 1 ? '1 usuário está assistindo' : `${anime.points} usuários estão assistindo`}</small></div>
+        <a class="leaderboard-cover" href="series/${anime.slug}.html"><img src="${anime.cover}" alt="Capa de ${anime.title}"></a>
+        <div class="leaderboard-name"><span>SÉRIE • ${anime.totalEpisodes} EPISÓDIOS DISPONÍVEIS</span><h3><a href="series/${anime.slug}.html">${anime.title}</a></h3><small>${anime.points === 1 ? '1 usuário está assistindo' : `${anime.points} usuários estão assistindo`}</small></div>
         <div class="leaderboard-value"><strong>${formatNumber(anime.points)}</strong><span>${anime.points === 1 ? 'PONTO' : 'PONTOS'}</span></div>
       </article>
     `).join('');
@@ -440,15 +433,15 @@
   }
 
   document.querySelectorAll('.quick-add').forEach(button => button.addEventListener('click', () => {
-    if (updateEntry({ status: 'planejo' })) { button.innerHTML = '<span>✓</span> Adicionado à lista'; showToast('Tomb Raider King foi adicionado à sua lista'); }
+    if (updateEntry({ status: 'planejo' })) { button.innerHTML = '<span>✓</span> Adicionada à lista'; showToast(`${animeTitle} foi adicionada à sua lista`); }
   }));
   listButton?.addEventListener('click', () => {
     const active = Boolean(getAnimeEntry(getCurrentProfile()).status);
-    if (updateEntry({ status: active ? '' : 'planejo' })) showToast(active ? 'Anime removido da sua lista' : 'Anime adicionado à sua lista');
+    if (updateEntry({ status: active ? '' : 'planejo' })) showToast(active ? 'Série removida da sua lista' : 'Série adicionada à sua lista');
   });
   statusSelect?.addEventListener('change', () => {
     const selected = statusSelect.value;
-    if (updateEntry({ status: selected })) showToast(selected ? 'Status atualizado' : 'Anime removido da sua lista');
+    if (updateEntry({ status: selected })) showToast(selected ? 'Status atualizado' : 'Série removida da sua lista');
   });
   scoreSelect?.addEventListener('change', () => {
     const score = scoreSelect.value;
@@ -535,7 +528,7 @@
       year: 'numeric'
     }).format(new Date(profile.joinedAt));
     document.getElementById('profileTheme').textContent = root.dataset.theme === 'dark' ? 'Escuro' : 'Claro';
-    const entries = Object.entries(profile.anime || {}).filter(([, entry]) => entry.status || entry.score || entry.favorite || entry.episodes);
+    const entries = Object.entries(profile.anime || {}).filter(([id, entry]) => animeCatalog[id] && (entry.status || entry.score || entry.favorite || entry.episodes));
     document.getElementById('profileListCount').textContent = entries.filter(([, entry]) => entry.status).length;
     document.getElementById('profileWatchingCount').textContent = entries.filter(([id, entry]) => entry.status === 'assistindo' && (airingAnime[id] || safeEpisodes(id, entry) < (animeEpisodeLimits[id] || Number(entry.totalEpisodes) || Infinity))).length;
     document.getElementById('profileCompletedCount').textContent = entries.filter(([id, entry]) => entry.status === 'concluido' || (!airingAnime[id] && safeEpisodes(id, entry) >= (animeEpisodeLimits[id] || Number(entry.totalEpisodes) || Infinity))).length;
@@ -550,10 +543,10 @@
     document.getElementById('profileXpBar').style.width = `${levelData.progress}%`;
     const list = document.getElementById('profileAnimeList');
     if (!entries.length) {
-      list.innerHTML = '<div class="empty-list"><span>＋</span><h3>Sua lista está vazia</h3><p>Adicione um anime e registre seu primeiro voto.</p><a class="button button-primary" href="animes.html">Explorar animes</a></div>';
+      list.innerHTML = '<div class="empty-list"><span>＋</span><h3>Sua lista está vazia</h3><p>Adicione uma série e registre seu primeiro voto.</p><a class="button button-primary" href="series.html">Explorar séries</a></div>';
     } else {
       list.innerHTML = entries.map(([id, entry]) => {
-        const fallback = animeCatalog[id] || { title: entry.title || id, slug: entry.slug || id, cover: entry.cover || 'assets/images/capas/tomb-raider-king.jpg', totalEpisodes: Number(entry.totalEpisodes) || 0 };
+        const fallback = animeCatalog[id] || { title: entry.title || id, slug: entry.slug || id, cover: entry.cover || 'assets/images/capas/a-casa-do-dragao-temporada-3.jpg', totalEpisodes: Number(entry.totalEpisodes) || 0 };
         const title = fallback.title;
         const slug = fallback.slug;
         const cover = fallback.cover;
@@ -561,7 +554,7 @@
         const episodes = safeEpisodes(id, entry);
         const storedStatus = episodes >= total && !airingAnime[id] ? 'concluido' : entry.status;
         const status = storedStatus ? storedStatus.replace('planejo','Planejo assistir').replace('assistindo','Assistindo').replace('concluido','Concluído').replace('pausado','Pausado').replace('abandonado','Abandonado') : 'Sem status';
-        return `<article class="profile-anime-card"><img src="${cover}" alt="Capa de ${title}"><div><span class="card-type">ANIME • ${total} EPISÓDIOS</span><h3><a href="anime/${slug}.html">${title}</a></h3><p>${status} • ${episodes}/${total} vistos <span class="anime-xp">+${episodes * experiencePerEpisode} XP</span></p></div><div class="profile-score"><span>SEU VOTO</span><strong>${entry.score || '—'}${entry.score ? '<small>/10</small>' : ''}</strong></div></article>`;
+        return `<article class="profile-anime-card"><img src="${cover}" alt="Capa de ${title}"><div><span class="card-type">SÉRIE • ${total} EPISÓDIOS DISPONÍVEIS</span><h3><a href="series/${slug}.html">${title}</a></h3><p>${status} • ${episodes}/${total} vistos <span class="anime-xp">+${episodes * experiencePerEpisode} XP</span></p></div><div class="profile-score"><span>SEU VOTO</span><strong>${entry.score || '—'}${entry.score ? '<small>/10</small>' : ''}</strong></div></article>`;
       }).join('');
     }
   }

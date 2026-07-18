@@ -1,21 +1,18 @@
-# Nakama
+# Central das Séries
 
-Protótipo de catálogo exclusivamente de animes em português, inspirado na organização de plataformas como o MyAnimeList.
+Acervo de seriados em português com páginas de séries e temporadas, calendário de lançamentos, lista pessoal, progresso, avaliações, XP e rankings.
 
 ## Estrutura
 
 - `index.html` — página inicial
-- `animes.html` — catálogo com todos os animes cadastrados
-- `anime/tomb-raider-king.html` — detalhes da adaptação animada de Tomb Raider King
-- `anime/dorohedoro.html` — página de Dorohedoro com 12 episódios
-- `login.html` — login e criação de conta com Google ou e-mail
-- `perfil.html` — perfil, lista e votos do usuário
-- `assets/css/style.css` — estilos globais e responsivos
-- `assets/js/app.js` — busca, filtros, tema, lista, favoritos, notas e abas
-- `assets/images/capas/` — capas baixadas e armazenadas localmente
+- `series.html` — catálogo de séries
+- `series/a-casa-do-dragao.html` — página principal de A Casa do Dragão
+- `series/a-casa-do-dragao-temporada-1.html` — primeira temporada
+- `series/a-casa-do-dragao-temporada-2.html` — segunda temporada
+- `series/a-casa-do-dragao-temporada-3.html` — terceira temporada
+- `calendario.html` — próximos episódios
+- `perfil.html` — perfil, lista e progresso
+- `ranking.html` — ranking de séries
+- `ranking-usuarios.html` — ranking da comunidade
 
-O progresso de cada anime pode ser informado manualmente ou avançado pelo botão `+`. Tomb Raider King e Dorohedoro possuem 12 episódios cada. Contas, listas, votos, progresso, XP e rankings são sincronizados pelo Firebase.
-
-Cada episódio assistido concede 22 XP. O level do perfil não possui limite fixo e utiliza uma curva crescente inspirada na fórmula de experiência do Tibia.
-
-Abra `index.html` em um navegador ou sirva a pasta com um servidor HTTP local.
+Contas, listas, votos, progresso, XP e rankings são sincronizados pelo Firebase. Cada episódio assistido concede 22 XP.

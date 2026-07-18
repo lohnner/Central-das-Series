@@ -10,6 +10,8 @@ Acervo de seriados em português com páginas de séries e temporadas, calendár
 - `series/a-casa-do-dragao-temporada-1.html` — primeira temporada
 - `series/a-casa-do-dragao-temporada-2.html` — segunda temporada
 - `series/a-casa-do-dragao-temporada-3.html` — terceira temporada
+- `series/friends.html` — página principal de Friends
+- `series/friends-temporada-1.html` até `friends-temporada-10.html` — dez temporadas e 236 episódios
 - `calendario.html` — próximos episódios
 - `perfil.html` — perfil, lista e progresso
 - `ranking.html` — ranking de séries

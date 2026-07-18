@@ -53,10 +53,11 @@
   const initials = name => name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase();
   const htmlEscapes = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
   const escapeHtml = value => String(value).replace(/[&<>"']/g, character => htmlEscapes[character]);
-  const animeEpisodeLimits = { 'a-casa-do-dragao': 22 };
-  const airingAnime = { 'a-casa-do-dragao': true };
+  const animeEpisodeLimits = { 'a-casa-do-dragao': 22, friends: 236 };
+  const airingAnime = { 'a-casa-do-dragao': true, friends: false };
   const animeCatalog = {
-    'a-casa-do-dragao': { title: 'A Casa do Dragão', slug: 'a-casa-do-dragao', cover: 'assets/images/capas/a-casa-do-dragao-temporada-3.jpg', totalEpisodes: 22 }
+    'a-casa-do-dragao': { title: 'A Casa do Dragão', slug: 'a-casa-do-dragao', cover: 'assets/images/capas/a-casa-do-dragao-temporada-3.jpg', totalEpisodes: 22 },
+    friends: { title: 'Friends', slug: 'friends', cover: 'assets/images/capas/friends-temporada-10.jpg', totalEpisodes: 236 }
   };
   const safeEpisodes = (id, entry = {}) => Math.min(animeEpisodeLimits[id] || Number(entry.totalEpisodes) || 0, Math.max(0, Number(entry.episodes) || 0));
   const formatNumber = value => new Intl.NumberFormat('pt-BR').format(value);
@@ -223,7 +224,8 @@
     const query = normalizeSearch(search.value.trim());
     if (!query) { results.hidden = true; return; }
     const catalog = [
-      { terms: 'a casa do dragao house of the dragon targaryen rhaenyra alicent', title: 'A Casa do Dragão', slug: 'a-casa-do-dragao', cover: 'a-casa-do-dragao-temporada-3.jpg', episodes: 22 }
+      { terms: 'a casa do dragao house of the dragon targaryen rhaenyra alicent', title: 'A Casa do Dragão', slug: 'a-casa-do-dragao', cover: 'a-casa-do-dragao-temporada-3.jpg', episodes: 22 },
+      { terms: 'friends rachel ross monica chandler joey phoebe comedia', title: 'Friends', slug: 'friends', cover: 'friends-temporada-10.jpg', episodes: 236 }
     ];
     const matches = catalog.filter(anime => anime.terms.includes(query));
     results.innerHTML = matches.length
@@ -360,8 +362,14 @@
   document.querySelectorAll('.info-card dt').forEach(term => {
     if (term.textContent.trim().toLowerCase() === 'formato') term.closest('div')?.remove();
   });
+  if (body.dataset.page === 'season-details') {
+    document.querySelector('.detail-tabs button[data-tab="visao-geral"]')?.remove();
+    document.getElementById('visao-geral')?.remove();
+    document.querySelector('.detail-tabs button[data-tab="episodios"]')?.classList.add('active');
+    document.getElementById('episodios')?.classList.add('active');
+  }
 
-  const episodeCatalog = [
+  let episodeCatalog = [
     [
       ['The Heirs of the Dragon', '2022-08-21', '21 ago. 2022'],
       ['The Rogue Prince', '2022-08-28', '28 ago. 2022'],
@@ -396,6 +404,29 @@
     ]
   ];
 
+  let episodeSourceUrl = 'https://press.wbd.com/na/property/house-dragon/synopses';
+  let episodeSourceLabel = 'HBO / Warner Bros. Discovery';
+  if (animeId === 'friends' && body.dataset.page === 'season-details') {
+    episodeCatalog = Array.from({ length: 10 }, () => []);
+    try {
+      const response = await fetch('https://api.tvmaze.com/shows/431/episodes');
+      if (!response.ok) throw new Error(`TVMaze: ${response.status}`);
+      const allEpisodes = await response.json();
+      allEpisodes.forEach(episode => {
+        if (episode.season >= 1 && episode.season <= 10) {
+          const displayDate = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+            .format(new Date(`${episode.airdate}T12:00:00Z`))
+            .replace('.', '');
+          episodeCatalog[episode.season - 1].push([episode.name, episode.airdate, displayDate]);
+        }
+      });
+      episodeSourceUrl = 'https://www.tvmaze.com/shows/431/friends/episodes';
+      episodeSourceLabel = 'TVMaze';
+    } catch (error) {
+      console.error('Não foi possível carregar os episódios de Friends.', error);
+    }
+  }
+
   if (body.dataset.page === 'season-details') {
     const seasonIndex = Number(body.dataset.seasonIndex);
     const availableEpisodes = Number(body.dataset.seasonLimit);
@@ -416,12 +447,12 @@
               <input class="episode-watch-checkbox" type="checkbox" data-season-index="${seasonIndex}" data-episode-number="${number}" ${available ? '' : 'disabled'}>
               <span class="episode-checkmark" aria-hidden="true"></span>
               <span class="episode-number">EP ${String(number).padStart(2, '0')}</span>
-              <span class="episode-copy"><strong>${title}</strong><small>${available ? 'Lançado em' : 'Estreia oficial'} <time datetime="${date}">${displayDate}</time></small></span>
+              <span class="episode-copy"><strong>${escapeHtml(title)}</strong><small>${available ? 'Lançado em' : 'Estreia oficial'} <time datetime="${date}">${displayDate}</time></small></span>
               <span class="episode-status">${available ? 'Marcar como assistido' : 'Em breve'}</span>
             </label>`;
           }).join('')}
         </div>
-        <p class="episode-source">Datas oficiais divulgadas pela <a href="https://press.wbd.com/na/property/house-dragon/synopses" target="_blank" rel="noopener">HBO / Warner Bros. Discovery</a>. Cada episódio marcado concede ${experiencePerEpisode} XP.</p>
+        <p class="episode-source">Datas de exibição consultadas no <a href="${episodeSourceUrl}" target="_blank" rel="noopener">${episodeSourceLabel}</a>. Cada episódio marcado concede ${experiencePerEpisode} XP.</p>
       `;
     }
   }

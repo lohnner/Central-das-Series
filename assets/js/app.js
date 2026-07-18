@@ -112,6 +112,7 @@
       username: profile.username,
       displayName: profile.displayName,
       joinedAt: profile.joinedAt,
+      photoURL: profile.photoURL || 'assets/images/perfil/avatar.png',
       anime: profile.anime || {}
     };
     await Promise.all([
@@ -144,6 +145,8 @@
         username,
         displayName: privateProfile?.displayName || firebaseUser.displayName || username,
         joinedAt: privateProfile?.joinedAt || firebaseUser.metadata?.creationTime || new Date().toISOString(),
+        photoURL: privateProfile?.photoURL || profiles[firebaseUser.uid]?.photoURL ||
+          (requiresNickname ? firebaseUser.photoURL : null) || 'assets/images/perfil/avatar.png',
         anime: privateProfile?.anime || profiles[firebaseUser.uid]?.anime || {}
       };
       profiles[firebaseUser.uid] = profile;
@@ -281,6 +284,7 @@
       return {
         username: profile.username,
         displayName: profile.displayName || profile.username,
+        photoURL: profile.photoURL || 'assets/images/perfil/avatar.png',
         experience,
         episodes: experience / experiencePerEpisode,
         level: levelFromExperience(experience).level
@@ -294,7 +298,7 @@
       list.innerHTML = ranking.map((user, index) => `
         <article class="leaderboard-row user-leaderboard-row${user.username === currentUsername ? ' is-current-user' : ''}">
           <span class="leaderboard-position">${index + 1}</span>
-          <div class="leaderboard-avatar">${escapeHtml(initials(user.displayName))}</div>
+          <div class="leaderboard-avatar"><img src="${escapeHtml(user.photoURL)}" alt="Foto de ${escapeHtml(user.displayName)}"></div>
           <div class="leaderboard-name"><span>${user.username === currentUsername ? 'VOCÊ • ' : ''}LEVEL ${user.level}</span><h3>${escapeHtml(user.displayName)}</h3><small>@${escapeHtml(user.username)} • ${formatNumber(user.episodes)} episódios assistidos</small></div>
           <div class="leaderboard-value"><strong>${formatNumber(user.experience)}</strong><span>XP</span></div>
         </article>
@@ -519,6 +523,10 @@
     }
     document.querySelectorAll('[data-profile-name]').forEach(item => item.textContent = profile.displayName);
     document.querySelectorAll('[data-profile-handle]').forEach(item => item.textContent = profile.username);
+    document.querySelectorAll('[data-profile-photo]').forEach(item => {
+      item.src = profile.photoURL || 'assets/images/perfil/avatar.png';
+      item.alt = `Foto de ${profile.displayName}`;
+    });
     document.getElementById('profileJoinedAt').textContent = new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
       month: 'long',

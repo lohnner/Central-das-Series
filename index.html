@@ -10,8 +10,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://lohnner.github.io/Livros-Loner/index.html">
   <title>Livros Loner — Acervo literário</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=livros-loner-6">
-  <script src="assets/js/app.js?v=livros-loner-6" defer></script>
+  <link rel="stylesheet" href="assets/css/style.css?v=livros-loner-7">
+  <script src="assets/js/app.js?v=livros-loner-7" defer></script>
 </head>
 <body data-root="">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -38,18 +38,49 @@
     </div>
   </header>
 
-  <main id="conteudo" class="minimal-home">
-    <section class="minimal-hero shell">
-      <span class="kicker">Acervo literário</span>
-      <h1>Livros e autores,<br><em>sem complicação.</em></h1>
-      <p>Encontre uma obra, conheça quem escreveu e siga sua próxima leitura.</p>
-      <div class="home-actions">
-        <a class="button button-primary" href="livros/index.html">Explorar livros <span aria-hidden="true">→</span></a>
-        <a class="button button-outline" href="autores/index.html">Ver autores</a>
+  <main id="conteudo" class="home-page">
+    <section class="home-hero">
+      <div class="shell home-hero-grid">
+        <div class="home-hero-copy">
+          <span class="kicker">Sua próxima leitura começa aqui</span>
+          <h1>Um lugar simples para <em>descobrir livros</em> e acompanhar leituras.</h1>
+          <p>Explore o acervo, conheça os autores e registre cada página lida em uma estante que é só sua.</p>
+          <div class="home-actions">
+            <a class="button button-primary" href="livros/index.html">Explorar livros <span aria-hidden="true">→</span></a>
+            <a class="button button-outline" href="autores/index.html">Conhecer autores</a>
+          </div>
+          <div class="home-counts" aria-label="Tamanho atual do acervo">
+            <span><strong>2</strong> livros no acervo</span>
+            <span><strong>2</strong> autores</span>
+          </div>
+        </div>
+        <div class="hero-books" aria-label="Destaques do acervo">
+          <a class="hero-book hero-book-back" href="livros/a-armadilha-do-paraiso.html">
+            <img src="assets/images/livros/a-armadilha-do-paraiso.jpg" alt="A Armadilha do Paraíso">
+          </a>
+          <a class="hero-book hero-book-front" href="livros/dawn-of-the-jedi-into-the-void.html">
+            <img src="assets/images/livros/dawn-of-the-jedi-into-the-void.jpg" alt="Dawn of the Jedi: Into the Void">
+          </a>
+          <span class="hero-orbit hero-orbit-one" aria-hidden="true">Leia</span>
+          <span class="hero-orbit hero-orbit-two" aria-hidden="true">Descubra</span>
+        </div>
       </div>
-      <div class="home-counts" aria-label="Tamanho atual do acervo">
-        <span><strong>2</strong> livros</span>
-        <span><strong>2</strong> autores</span>
+    </section>
+
+    <section class="home-featured shell" aria-labelledby="destaques">
+      <div class="section-line">
+        <div><span class="kicker">Para começar</span><h2 id="destaques">Livros em destaque</h2></div>
+        <a href="livros/index.html">Ver acervo completo →</a>
+      </div>
+      <div class="featured-grid">
+        <a class="featured-card" href="livros/dawn-of-the-jedi-into-the-void.html">
+          <img src="assets/images/livros/dawn-of-the-jedi-into-the-void.jpg" alt="Capa de Dawn of the Jedi: Into the Void">
+          <span class="featured-copy"><small>Star Wars Legends</small><strong>Dawn of the Jedi: Into the Void</strong><span>Tim Lebbon · 2013</span><em>Ver detalhes →</em></span>
+        </a>
+        <a class="featured-card" href="livros/a-armadilha-do-paraiso.html">
+          <img src="assets/images/livros/a-armadilha-do-paraiso.jpg" alt="Capa de A Armadilha do Paraíso">
+          <span class="featured-copy"><small>Trilogia Han Solo</small><strong>A Armadilha do Paraíso</strong><span>A. C. Crispin · 2016</span><em>Ver detalhes →</em></span>
+        </a>
       </div>
     </section>
   </main>

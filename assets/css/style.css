@@ -667,6 +667,18 @@ body { color: var(--ink); font-size: 15px; }
 .copy-isbn { height: 42px; border-color: #b9dcec; border-radius: 10px; background: var(--accent-soft); font-size: 10px; }
 .compact-sources { color: var(--muted); font-size: 11px; }
 .compact-sources a { color: var(--accent-dark); font-weight: 700; }
+.book-about-wide { grid-column: 1 / -1; }
+.book-author-badge span {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 11px;
+  font-weight: 800;
+}
 
 .profile-panel { padding: 34px; border-color: var(--line); border-radius: 22px; box-shadow: var(--shadow); }
 .author-avatar { width: 160px; height: 160px; border: 6px solid var(--accent-soft); }

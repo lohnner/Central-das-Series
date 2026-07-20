@@ -3,8 +3,8 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Catálogo de livros em edições brasileiras e em português."><meta name="theme-color" content="#168dcc">
   <title>Livros — Livros Loner</title>
-  <link rel="stylesheet" href="../assets/css/style.css?v=livros-loner-12">
-  <script src="../assets/js/books.js?v=livros-loner-12" defer></script><script src="../assets/js/app.js?v=livros-loner-12" defer></script>
+  <link rel="stylesheet" href="../assets/css/style.css?v=livros-loner-13">
+  <script src="../assets/js/books.js?v=livros-loner-13" defer></script><script src="../assets/js/app.js?v=livros-loner-13" defer></script>
 </head><body data-root="../">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <header class="site-header"><div class="header-inner shell">
@@ -18,7 +18,7 @@
     <section class="catalog-main shell" aria-label="Filtros e resultados de livros">
       <div class="catalog-toolbar"><label class="catalog-search"><span hidden>Pesquisar livros</span><input type="search" data-catalog-search placeholder="Pesquisar por título, autoria ou editora..." autocomplete="off"></label><button class="filter-toggle" type="button" data-filter-toggle aria-expanded="false" aria-controls="bookFilters"><span data-filter-label>Filtrar</span><span class="filter-count" data-filter-count hidden>0</span></button></div>
       <div class="filter-panel" id="bookFilters" data-filter-panel hidden><div class="filter-panel-grid">
-        <div class="filter-field"><label for="bookYear">Ano da edição</label><input id="bookYear" type="number" min="1900" max="2100" placeholder="Ex.: 2020" data-filter-key="year"></div>
+        <div class="filter-field"><label for="bookYear">Ano de lançamento</label><input id="bookYear" type="number" min="1800" max="2100" placeholder="Ex.: 1937" data-filter-key="year"></div>
         <div class="filter-field"><label for="bookGenre">Gênero</label><select id="bookGenre" data-filter-key="genre"><option value="">Todos</option><option value="romance">Romance</option><option value="contos">Contos</option><option value="fantasia">Fantasia / fábula</option><option value="biografia">Diário / biografia</option><option value="teatro">Teatro</option></select></div>
         <div class="filter-field"><label for="bookLanguage">Idioma</label><select id="bookLanguage" data-filter-key="language"><option value="">Todos</option><option value="portugues">Português</option></select></div>
         <div class="filter-field"><label for="bookSeries">Tipo de edição</label><select id="bookSeries" data-filter-key="series"><option value="">Todos</option><option value="edicao-brasileira">Edição brasileira</option></select></div>

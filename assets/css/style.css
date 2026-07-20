@@ -38,6 +38,19 @@ img { display: block; max-width: 100%; }
 .main-nav a::after { content: ''; position: absolute; left: 0; right: 100%; bottom: -1px; height: 2px; background: var(--accent); transition: right .18s ease; }
 .main-nav a:hover, .main-nav a.active { color: var(--ink); }
 .main-nav a:hover::after, .main-nav a.active::after { right: 0; }
+.random-book-button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 15px;
+  background: var(--accent);
+  color: #fff;
+  font: 700 12px var(--sans);
+  letter-spacing: .4px;
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease;
+}
+.random-book-button:hover { background: var(--accent-dark); transform: translateY(-1px); }
+.random-book-button:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
 .account-nav { display: flex; align-items: center; margin-left: 8px; }
 .login-link { min-height: 34px; display: inline-flex; align-items: center; padding: 0 13px; border: 1px solid var(--line); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
 .login-link:hover { border-color: var(--accent); color: var(--accent); }
@@ -678,6 +691,7 @@ body { color: var(--ink); font-size: 15px; }
   }
   .main-nav a { padding: 13px 14px; border: 0; font: 700 18px var(--sans); }
   .main-nav a.active { background: var(--accent-soft); }
+  .random-book-button { margin-top: 8px; padding: 14px; font-size: 17px; text-align: left; }
   .home-hero-grid { min-height: auto; padding-block: 48px 24px; }
   .home-hero h1 { font-size: clamp(42px,12vw,58px); letter-spacing: -2px; }
   .home-hero-copy > p { font-size: 16px; }

@@ -41,6 +41,15 @@
     if (menuToggle) menuToggle.textContent = '☰';
   }));
 
+  document.querySelectorAll('[data-random-book]').forEach(button => {
+    button.addEventListener('click', () => {
+      const books = window.LIVROS_LONER_BOOKS || [];
+      if (!books.length) return;
+      const book = books[Math.floor(Math.random() * books.length)];
+      window.location.href = `${root}livros/livro.html?slug=${encodeURIComponent(book.slug)}`;
+    });
+  });
+
   const normalize = value => String(value)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

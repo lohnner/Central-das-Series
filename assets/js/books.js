@@ -66,7 +66,7 @@ window.LIVROS_LONER_BOOKS = [
     slug: 'o-auto-da-compadecida', title: 'O Auto da Compadecida', originalTitle: 'Auto da Compadecida',
     author: 'Ariano Suassuna', authorNationality: 'Brasileiro', year: 2018, originalYear: 1955, country: 'Brasil', publisher: 'Nova Fronteira',
     pages: 208, isbn: '9788520938393', genre: 'Teatro', genreKey: 'teatro',
-    cover: 'o-auto-da-compadecida.jpg', label: 'Teatro brasileiro',
+    cover: 'o-auto-da-compadecida-nova.jpg', label: 'Teatro brasileiro',
     summary: 'João Grilo e Chicó atravessam confusões no sertão usando esperteza e imaginação, até que todos precisam prestar contas no julgamento final.',
     about: 'A peça combina cultura popular nordestina, humor, crítica social e religiosidade em uma história que se tornou um clássico.',
     source: 'https://openlibrary.org/search?q=Auto+da+Compadecida+Ariano+Suassuna'

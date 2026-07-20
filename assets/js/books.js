@@ -30,7 +30,7 @@ window.LIVROS_LONER_BOOKS = [
     slug: 'capitaes-da-areia', title: 'Capitães da Areia', originalTitle: 'Capitães da Areia',
     author: 'Jorge Amado', year: 2008, originalYear: 1937, publisher: 'Companhia das Letras',
     pages: 288, isbn: '9788535914061', genre: 'Romance', genreKey: 'romance',
-    cover: 'capitaes-da-areia.jpg', label: 'Literatura brasileira',
+    cover: 'capitaes-da-areia-nova.jpg', label: 'Literatura brasileira',
     summary: 'Nas ruas de Salvador, um grupo de meninos abandonados sobrevive entre pequenos delitos, amizade e sonhos de uma vida diferente.',
     about: 'Jorge Amado acompanha os jovens sem reduzir suas contradições e transforma a cidade de Salvador em parte essencial da narrativa.',
     source: 'https://openlibrary.org/search?q=Capitaes+da+Areia+Jorge+Amado'

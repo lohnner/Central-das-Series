@@ -186,7 +186,10 @@
     books: {}
   });
 
+  const activeBookSlugs = new Set((window.LIVROS_LONER_BOOKS || []).map(book => book.slug));
+  const isActiveBook = book => !activeBookSlugs.size || activeBookSlugs.has(book?.slug);
   const getTotalXp = profile => Object.values(profile?.books || {})
+    .filter(isActiveBook)
     .reduce((total, book) => total + Math.max(0, Number(book.xpEarned || 0)), 0);
 
   const thresholdForLevel = level => {
@@ -446,7 +449,7 @@
     if (document.body.dataset.page !== 'profile' || !currentUser || !currentProfile) return;
     const xp = getTotalXp(currentProfile);
     const level = getLevelData(xp);
-    const books = Object.values(currentProfile.books || {}).sort((a, b) => (
+    const books = Object.values(currentProfile.books || {}).filter(isActiveBook).sort((a, b) => (
       String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''))
     ));
 
@@ -469,7 +472,7 @@
     list.replaceChildren(...books.map(book => {
       const link = document.createElement('a');
       link.className = 'profile-book';
-      link.href = `${root}livros/${book.slug}.html`;
+      link.href = `${root}livros/livro.html?slug=${encodeURIComponent(book.slug)}`;
 
       const image = document.createElement('img');
       image.src = `${root}${book.cover}`;

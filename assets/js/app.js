@@ -228,6 +228,14 @@
       xp,
       level: getLevelData(xp).level,
       readingSlugs: books.filter(book => book.status === 'reading').map(book => book.slug),
+      books: books.map(book => ({
+        slug: book.slug,
+        status: book.status || '',
+        pagesRead: Math.max(0, Number(book.pagesRead || 0)),
+        totalPages: Math.max(0, Number(book.totalPages || 0)),
+        xpEarned: Math.max(0, Number(book.xpEarned || 0)),
+        updatedAt: book.updatedAt || ''
+      })),
       updatedAt: new Date().toISOString()
     };
   };
@@ -287,8 +295,9 @@
       return;
     }
     container.replaceChildren(...users.map((user, index) => {
-      const row = document.createElement('article');
+      const row = document.createElement('a');
       row.className = 'ranking-row ranking-user-row';
+      row.href = `${root}usuarios/perfil.html?id=${encodeURIComponent(user.uid)}`;
       const avatar = document.createElement('span');
       avatar.className = 'ranking-avatar';
       avatar.textContent = initialsFor(user.displayName);
@@ -310,15 +319,96 @@
     }));
   };
 
+  const renderPublicProfile = profiles => {
+    const page = document.querySelector('[data-public-profile]');
+    if (!page) return;
+    const uid = new URLSearchParams(location.search).get('id');
+    const profile = profiles.find(item => item.uid === uid);
+    if (!profile) {
+      page.innerHTML = '<div class="public-profile-missing"><h1>Leitor não encontrado</h1><p>Este perfil ainda não publicou dados de leitura.</p><a class="button button-primary" href="../ranking/usuarios.html">Voltar ao ranking</a></div>';
+      return;
+    }
+
+    const catalogBySlug = new Map((window.LIVROS_LONER_BOOKS || []).map(book => [book.slug, book]));
+    const publicBooks = Array.isArray(profile.books)
+      ? profile.books.filter(book => catalogBySlug.has(book.slug))
+      : (profile.readingSlugs || []).map(slug => ({ slug, status: 'reading', pagesRead: 0, totalPages: catalogBySlug.get(slug)?.pages || 0, xpEarned: 0 }));
+    const totalPages = publicBooks.reduce((sum, book) => sum + Math.max(0, Number(book.pagesRead || 0)), 0);
+
+    document.title = `${profile.displayName || 'Leitor'} — Livros Loner`;
+    const setValue = (selector, value) => {
+      const element = page.querySelector(selector);
+      if (element) element.textContent = value;
+    };
+    setValue('[data-public-initials]', initialsFor(profile.displayName));
+    setValue('[data-public-name]', profile.displayName || 'Leitor');
+    setValue('[data-public-level]', profile.level || getLevelData(Number(profile.xp || 0)).level);
+    setValue('[data-public-xp]', `${Number(profile.xp || 0).toLocaleString('pt-BR')} XP`);
+    setValue('[data-public-pages]', totalPages.toLocaleString('pt-BR'));
+    setValue('[data-public-reading]', publicBooks.filter(book => book.status === 'reading').length);
+    setValue('[data-public-finished]', publicBooks.filter(book => book.status === 'finished').length);
+    setValue('[data-public-total-books]', publicBooks.length);
+
+    const library = page.querySelector('[data-public-library]');
+    if (!library) return;
+    const groups = [
+      ['reading', 'Lendo agora', 'Livros em andamento'],
+      ['finished', 'Finalizados', 'Leituras concluídas'],
+      ['want', 'Quero ler', 'Próximas leituras'],
+      ['owned', 'Tenho o livro', 'Livros na estante'],
+      ['abandoned', 'Abandonados', 'Leituras interrompidas']
+    ];
+
+    library.replaceChildren(...groups.map(([status, title, description]) => {
+      const books = publicBooks
+        .filter(book => book.status === status)
+        .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+      const section = document.createElement('section');
+      section.className = 'public-shelf-section';
+      const heading = document.createElement('div');
+      heading.className = 'public-shelf-heading';
+      heading.innerHTML = `<div><span class="kicker">${description}</span><h2>${title}</h2></div><strong>${books.length}</strong>`;
+      const grid = document.createElement('div');
+      grid.className = 'public-books-grid';
+      if (!books.length) {
+        grid.innerHTML = '<p class="public-shelf-empty">Nenhum livro nesta categoria.</p>';
+      } else {
+        grid.replaceChildren(...books.map(savedBook => {
+          const book = catalogBySlug.get(savedBook.slug);
+          const pages = Math.min(Number(book.pages || savedBook.totalPages || 0), Math.max(0, Number(savedBook.pagesRead || 0)));
+          const percentage = book.pages ? Math.min(100, (pages / book.pages) * 100) : 0;
+          const card = document.createElement('a');
+          card.className = 'public-book-card';
+          card.href = `${root}${book.page}`;
+          card.innerHTML = `
+            <img src="${root}assets/images/livros/${book.cover}" alt="">
+            <span class="public-book-copy">
+              <small>${book.author}</small>
+              <strong>${book.title}</strong>
+              <span>${pages} de ${book.pages} páginas · ${Number(savedBook.xpEarned || 0)} XP</span>
+              <i class="public-book-progress"><b style="width:${percentage}%"></b></i>
+            </span>`;
+          return card;
+        }));
+      }
+      section.append(heading, grid);
+      return section;
+    }));
+  };
+
   const renderRankings = async () => {
-    if (!document.querySelector('[data-ranking-books], [data-ranking-users]')) return;
+    if (!document.querySelector('[data-ranking-books], [data-ranking-users], [data-public-profile]')) return;
     try {
       const snapshot = await db.collection('publicProfiles').get();
       const profiles = snapshot.docs
-        .map(doc => doc.data()?.livrosLonerRanking)
+        .map(doc => {
+          const profile = doc.data()?.livrosLonerRanking;
+          return profile ? { uid: doc.id, ...profile } : null;
+        })
         .filter(Boolean);
       renderBookRanking(profiles);
       renderUserRanking(profiles);
+      renderPublicProfile(profiles);
     } catch (error) {
       console.warn('Não foi possível carregar o ranking.', error);
       document.querySelectorAll('[data-ranking-books], [data-ranking-users]').forEach(container => {

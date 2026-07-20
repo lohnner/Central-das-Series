@@ -816,6 +816,54 @@ a.ranking-row:hover { background: var(--accent-soft); }
 .ranking-score strong { color: var(--accent-dark); font-size: 22px; }
 .ranking-loading, .ranking-empty { padding: 48px 24px; color: var(--muted); text-align: center; }
 
+.public-profile-page { min-height: calc(100vh - 142px); padding-block: 34px 76px; }
+.public-reader-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 92px 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding: 32px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff 55%, var(--accent-soft));
+  box-shadow: var(--shadow);
+}
+.public-reader-hero::after { content: ''; position: absolute; right: -55px; bottom: -105px; width: 250px; height: 250px; border: 40px solid rgba(22,141,204,.08); border-radius: 50%; }
+.public-reader-avatar { position: relative; z-index: 1; width: 92px; height: 92px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(145deg, #23a8e6, #0874b1); box-shadow: 0 10px 24px rgba(22,141,204,.28); color: #fff; font: 700 32px var(--serif); }
+.public-reader-identity, .public-reader-level { position: relative; z-index: 1; }
+.public-reader-identity h1 { margin: 4px 0 6px; font: 700 clamp(36px,5vw,54px)/1 var(--serif); letter-spacing: -1.5px; }
+.public-reader-identity p { margin: 0; color: var(--muted); font-size: 13px; }
+.public-reader-level { min-width: 122px; padding: 15px 20px; border-radius: 14px; background: var(--accent); color: #fff; text-align: center; }
+.public-reader-level small, .public-reader-level strong { display: block; }
+.public-reader-level small { font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.public-reader-level strong { font: 700 36px/1 var(--serif); }
+.public-reader-stats { display: grid; grid-template-columns: repeat(5,1fr); gap: 11px; margin-top: 13px; }
+.public-reader-stats article { min-height: 105px; display: grid; align-content: center; gap: 7px; padding: 18px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); box-shadow: 0 5px 18px rgba(30,55,85,.04); }
+.public-reader-stats small { color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.public-reader-stats strong { color: var(--ink); font: 700 24px/1 var(--serif); }
+.public-library-heading { margin: 38px 0 16px; }
+.public-library-heading h2 { margin: 5px 0 0; font: 700 34px/1 var(--serif); }
+.public-library { display: grid; gap: 16px; }
+.public-shelf-section { overflow: hidden; border: 1px solid var(--line); border-radius: 19px; background: var(--surface); box-shadow: 0 6px 20px rgba(30,55,85,.05); }
+.public-shelf-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 22px; border-bottom: 1px solid var(--line); background: #fbfcfe; }
+.public-shelf-heading h2 { margin: 4px 0 0; font: 700 26px/1 var(--serif); }
+.public-shelf-heading > strong { min-width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: var(--accent-soft); color: var(--accent-dark); font-size: 15px; }
+.public-books-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; padding: 16px; }
+.public-book-card { min-width: 0; display: grid; grid-template-columns: 70px minmax(0,1fr); gap: 14px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcfe; color: var(--ink); transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.public-book-card:hover { border-color: #a9d8ef; box-shadow: var(--shadow); transform: translateY(-2px); }
+.public-book-card img { width: 70px; height: 100px; border-radius: 7px; object-fit: cover; box-shadow: 0 5px 14px rgba(30,55,85,.15); }
+.public-book-copy { min-width: 0; display: grid; align-content: center; gap: 6px; }
+.public-book-copy > small { color: var(--accent-dark); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
+.public-book-copy > strong { overflow: hidden; font: 700 20px/1.1 var(--serif); text-overflow: ellipsis; white-space: nowrap; }
+.public-book-copy > span { color: var(--muted); font-size: 11px; }
+.public-book-progress { height: 5px; overflow: hidden; border-radius: 99px; background: var(--surface-2); }
+.public-book-progress b { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,var(--accent),var(--green)); }
+.public-shelf-empty { grid-column: 1 / -1; margin: 0; padding: 20px; color: var(--muted); text-align: center; font-size: 12px; }
+.public-profile-missing { margin-top: 40px; padding: 55px 30px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); text-align: center; }
+.public-profile-missing h1 { font: 700 40px/1 var(--serif); }
+
 .site-footer { border-color: var(--line); background: #fff; }
 .footer-inner { min-height: 70px; color: var(--muted); font-size: 11px; letter-spacing: .4px; text-transform: none; }
 
@@ -867,6 +915,8 @@ a.ranking-row:hover { background: var(--accent-soft); }
   .ranking-row { grid-template-columns: 42px 48px minmax(0,1fr) 90px; gap: 12px; padding-inline: 14px; }
   .ranking-main strong { font-size: 18px; }
   .profile-stats { grid-template-columns: repeat(2, 1fr); }
+  .public-reader-stats { grid-template-columns: repeat(3,1fr); }
+  .public-books-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 520px) {
@@ -903,4 +953,13 @@ a.ranking-row:hover { background: var(--accent-soft); }
   .ranking-score { grid-column: 3; justify-items: start; text-align: left; }
   .ranking-cover { width: 42px; height: 60px; }
   .ranking-avatar { width: 42px; height: 42px; }
+  .public-reader-hero { grid-template-columns: 68px 1fr; gap: 16px; padding: 22px; }
+  .public-reader-avatar { width: 68px; height: 68px; font-size: 24px; }
+  .public-reader-level { grid-column: 1 / -1; text-align: left; }
+  .public-reader-level small, .public-reader-level strong { display: inline; margin-right: 6px; }
+  .public-reader-stats { grid-template-columns: 1fr 1fr; gap: 9px; }
+  .public-reader-stats article { min-height: 90px; padding: 15px; }
+  .public-books-grid { padding: 11px; }
+  .public-book-card { grid-template-columns: 58px minmax(0,1fr); gap: 11px; }
+  .public-book-card img { width: 58px; height: 84px; }
 }
